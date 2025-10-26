@@ -1,16 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import AlbumCard from "./AlbumCard";
 
-// Mock Next.js Image component
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: (props: any) => {
-    const { priority, placeholder, blurDataURL, ...imgProps } = props;
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img {...imgProps} />;
-  },
-}));
-
 const album = {
   id: "1",
   title: "Test Album",
