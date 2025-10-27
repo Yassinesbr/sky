@@ -3,6 +3,7 @@
 import Image from "next/image";
 import * as S from "./AlbumCard.styles";
 import { Album } from "@/lib/slices/albumsSlice";
+import { useText } from "@/hooks/useText";
 
 type Props = {
   album: Album;
@@ -15,6 +16,7 @@ export default function AlbumCard({
   isFavorite,
   onToggleFavorite,
 }: Props) {
+  const { t } = useText();
   const openLink = () => {
     window.open(album.link, "_blank", "noopener,noreferrer");
   };
@@ -54,7 +56,7 @@ export default function AlbumCard({
           }}
           aria-pressed={isFavorite}
         >
-          {isFavorite ? "★ Favorited" : "❤ Favorite"}
+          {isFavorite ? t("albumCard.favorited") : t("albumCard.favorite")}
         </S.Button>
       </S.Actions>
     </S.Card>

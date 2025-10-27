@@ -5,6 +5,7 @@ import * as S from "./AlbumList.styles";
 import AlbumCard from "@/components/AlbumCard/AlbumCard";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Album, toggleFavorite } from "@/lib/slices/albumsSlice";
+import { useText } from "@/hooks/useText";
 
 type FeedItem = {
   id: { label: string };
@@ -37,6 +38,7 @@ export default function AlbumList({
   search = "",
   showOnlyFavorites = false,
 }: Props) {
+  const { t } = useText();
   const dispatch = useAppDispatch();
   const favorites = useAppSelector((s) => s.albums.favorites);
 
@@ -152,7 +154,9 @@ export default function AlbumList({
           />
         ))}
       </S.Grid>
-      {filtered.length === 0 && !loading && <S.Empty>No albums found.</S.Empty>}
+      {filtered.length === 0 && !loading && (
+        <S.Empty>{t("albumList.empty")}</S.Empty>
+      )}
       {visible < filtered.length && (
         <S.Sentinel ref={sentinelRef}>
           <div
@@ -162,7 +166,7 @@ export default function AlbumList({
               padding: "20px",
             }}
           >
-            Loading more albums... ({visible} of {filtered.length})
+            {t("albumList.loading")} ({visible} of {filtered.length})
           </div>
         </S.Sentinel>
       )}

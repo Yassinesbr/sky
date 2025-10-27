@@ -1,0 +1,22 @@
+{
+  "header": {
+    "title": "Sky Music — Top 100 Albums",
+    "searchPlaceholder": "Search albums or artists...",
+    "searchAriaLabel": "Search",
+    "showAll": "Show All",
+    "showFavorites": "Show Favorites"
+  },
+  "albumCard": {
+    "favorite": "❤ Favorite",
+    "favorited": "★ Favorited"
+  },
+  "albumList": {
+    "empty": "No albums found",
+    "loading": "Loading..."
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong",
+    "message": "We encountered an unexpected error. Please try reloading the page.",
+    "reloadButton": "Reload Page"
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import * as S from "./Header.styles";
+import { useText } from "@/hooks/useText";
 
 type Props = {
   onSearchChange?: (v: string) => void;
@@ -9,17 +10,21 @@ type Props = {
 };
 
 export default function Header(props: Props) {
+  const { t } = useText();
+
   return (
     <S.Bar>
-      <S.Title>Sky Music — Top 100 Albums</S.Title>
+      <S.Title>{t("header.title")}</S.Title>
       <S.Controls>
         <S.Input
-          placeholder="Search albums or artists..."
-          aria-label="Search"
+          placeholder={t("header.searchPlaceholder")}
+          aria-label={t("header.searchAriaLabel")}
           onChange={(e) => props.onSearchChange?.(e.target.value)}
         />
         <S.Toggle onClick={props.onToggleFavorites}>
-          {props.showOnlyFavorites ? "Show All" : "Show Favorites"}
+          {props.showOnlyFavorites
+            ? t("header.showAll")
+            : t("header.showFavorites")}
         </S.Toggle>
       </S.Controls>
     </S.Bar>

@@ -2,6 +2,7 @@
 
 import { Component, ReactNode } from "react";
 import * as S from "./ErrorBoundary.styles";
+import textContent from "@/locales/en.json";
 
 type Props = {
   children: ReactNode;
@@ -35,10 +36,8 @@ export default class ErrorBoundary extends Component<Props, State> {
 
       return (
         <S.ErrorContainer>
-          <S.ErrorTitle>Oops! Something went wrong</S.ErrorTitle>
-          <S.ErrorMessage>
-            We encountered an unexpected error. Please try reloading the page.
-          </S.ErrorMessage>
+          <S.ErrorTitle>{textContent.errorBoundary.title}</S.ErrorTitle>
+          <S.ErrorMessage>{textContent.errorBoundary.message}</S.ErrorMessage>
           {process.env.NODE_ENV === "development" && this.state.error && (
             <S.ErrorMessage
               style={{ fontSize: "14px", fontFamily: "monospace" }}
@@ -47,7 +46,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </S.ErrorMessage>
           )}
           <S.ReloadButton onClick={() => window.location.reload()}>
-            Reload Page
+            {textContent.errorBoundary.reloadButton}
           </S.ReloadButton>
         </S.ErrorContainer>
       );
