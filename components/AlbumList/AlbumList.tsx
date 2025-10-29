@@ -6,18 +6,10 @@ import AlbumCard from "@/components/AlbumCard/AlbumCard";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { Album, toggleFavorite } from "@/lib/slices/albumsSlice";
 import { useText } from "@/hooks/useText";
+import { ITunesEntry } from "@/app/api/top-albums/route";
+import AlbumListSkeleton from "./AlbumListSkeleton";
 
-type FeedItem = {
-  id: { label: string };
-  title: { label: string };
-  "im:image": { label: string }[];
-  link: { attributes: { href: string } };
-  category: { attributes: { label: string } };
-  "im:price": { label: string };
-  "im:artist": { label: string };
-};
-
-function mapFeedItem(it: FeedItem) {
+function mapFeedItem(it: ITunesEntry) {
   return {
     id: it.id.label,
     title: it.title.label,
@@ -32,11 +24,17 @@ function mapFeedItem(it: FeedItem) {
 type Props = {
   search?: string;
   showOnlyFavorites?: boolean;
+  initialData?: {
+    feed: {
+      entry: ITunesEntry[];
+    };
+  };
 };
 
 export default function AlbumList({
   search = "",
   showOnlyFavorites = false,
+  initialData,
 }: Props) {
   const { t } = useText();
   const dispatch = useAppDispatch();
@@ -44,16 +42,17 @@ export default function AlbumList({
 
   const [all, setAll] = useState<ReturnType<typeof mapFeedItem>[]>([]);
   const [visible, setVisible] = useState(12);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!initialData);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const filteredLengthRef = useRef(0);
 
   const load = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/top-albums", { cache: "no-store" });
+      // Fetch from API route (same endpoint as server)
+      const res = await fetch("/api/top-albums");
       const data = await res.json();
-      const items: FeedItem[] = data?.feed?.entry ?? [];
+      const items: ITunesEntry[] = data?.feed?.entry ?? [];
       setAll(items.map(mapFeedItem));
     } catch (error) {
       console.error("Failed to load albums:", error);
@@ -62,9 +61,16 @@ export default function AlbumList({
     }
   }, []);
 
+  // Initialize with server-side data if available
   useEffect(() => {
-    load();
-  }, [load]);
+    if (initialData) {
+      const items: ITunesEntry[] = initialData?.feed?.entry ?? [];
+      setAll(items.map(mapFeedItem));
+      setLoading(false);
+    } else {
+      load();
+    }
+  }, [initialData, load]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -123,23 +129,7 @@ export default function AlbumList({
   }, [search, showOnlyFavorites]);
 
   if (loading) {
-    return (
-      <S.Grid>
-        {Array.from({ length: 12 }).map((_, i) => (
-          <S.LoadingCard key={i}>
-            <S.LoadingSkeleton />
-            <S.LoadingMeta>
-              <S.LoadingTitle />
-              <S.LoadingArtist />
-            </S.LoadingMeta>
-            <S.LoadingActions>
-              <S.LoadingButton />
-              <S.LoadingButton />
-            </S.LoadingActions>
-          </S.LoadingCard>
-        ))}
-      </S.Grid>
-    );
+    return <AlbumListSkeleton />;
   }
 
   return (

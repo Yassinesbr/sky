@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 
 export const URL = "https://itunes.apple.com/us/rss/topalbums/limit=100/json";
 
-type ITunesImage = {
+export type ITunesImage = {
   label: string;
   attributes?: { height: string };
 };
 
-type ITunesEntry = {
+export type ITunesEntry = {
   id: { label: string };
   title: { label: string };
   "im:artist": { label: string };
@@ -17,7 +17,7 @@ type ITunesEntry = {
   "im:price": { label: string };
 };
 
-type ITunesResponse = {
+export type ITunesResponse = {
   feed: {
     entry: ITunesEntry[];
   };
@@ -26,8 +26,10 @@ type ITunesResponse = {
 export async function GET() {
   try {
     const res = await fetch(URL, {
-      cache: "no-store",
-      next: { revalidate: 0 },
+      next: {
+        revalidate: 3600,
+        tags: ["top-albums"], // For on-demand revalidation
+      },
     });
 
     if (!res.ok) {

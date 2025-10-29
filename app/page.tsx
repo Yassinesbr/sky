@@ -1,28 +1,27 @@
-"use client";
+import AlbumsClient from "@/components/AlbumsClient/AlbumsClient";
+import { ITunesResponse } from "./api/top-albums/route";
 
-import { useState } from "react";
-import Header from "@/components/Header/Header";
-import AlbumList from "@/components/AlbumList/AlbumList";
-import styled from "styled-components";
+async function getTopAlbums(): Promise<ITunesResponse> {
+  try {
+    // Fetch from API route
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/top-albums`, {
+      next: { revalidate: 3600 },
+    });
 
-const Container = styled.main`
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 16px 64px;
-`;
+    if (!res.ok) {
+      throw new Error(`Failed to fetch albums: ${res.status}`);
+    }
 
-export default function HomePage() {
-  const [search, setSearch] = useState("");
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+    return res.json();
+  } catch (error) {
+    console.error("Error fetching albums:", error);
+    return { feed: { entry: [] } };
+  }
+}
 
-  return (
-    <Container>
-      <Header
-        onSearchChange={setSearch}
-        onToggleFavorites={() => setShowOnlyFavorites((v) => !v)}
-        showOnlyFavorites={showOnlyFavorites}
-      />
-      <AlbumList search={search} showOnlyFavorites={showOnlyFavorites} />
-    </Container>
-  );
+export default async function HomePage() {
+  const data = await getTopAlbums();
+
+  return <AlbumsClient initialData={data} />;
 }
