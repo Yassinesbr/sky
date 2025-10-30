@@ -1,11 +1,9 @@
 import AlbumsClient from "@/components/AlbumsClient/AlbumsClient";
-import { ITunesResponse } from "./api/top-albums/route";
+import { ITunesResponse, URL } from "./api/top-albums/route";
 
 async function getTopAlbums(): Promise<ITunesResponse> {
   try {
-    // Fetch from API route
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/top-albums`, {
+    const res = await fetch(URL, {
       next: { revalidate: 3600 },
     });
 
